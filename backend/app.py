@@ -341,6 +341,21 @@ def extract_text_from_pdf_file(pdf_file):
 
     extracted_text = ""
 
+    # Engine 0: PyPDF2 (always installed - primary fallback)
+    try:
+        import PyPDF2
+        reader = PyPDF2.PdfReader(io.BytesIO(pdf_bytes))
+        pages_text = []
+        for page in reader.pages:
+            t = page.extract_text()
+            if t:
+                pages_text.append(t)
+        extracted_text = "\n".join(pages_text).strip()
+        if extracted_text:
+            return extracted_text
+    except Exception as e:
+        print(f"PyPDF2 extraction note: {e}")
+
     # Engine 1: PyMuPDF (pymupdf)
     try:
         import pymupdf
